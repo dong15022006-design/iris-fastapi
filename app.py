@@ -24,9 +24,9 @@ species = {
 }
 
 species_images = {
-    0: "https://commons.wikimedia.org/wiki/File:Iris_setosa_var._setosa_(2595031014).jpg",
-    1: "https://commons.wikimedia.org/wiki/File:.00_7973_Verschiedenfarbige_Schwertlilie_(Iris_versicolor).jpg",
-    2: "https://commons.wikimedia.org/wiki/File:Iris_virginica.jpg",
+    0: "https://raw.githubusercontent.com/dong15022006-design/iris-fastapi/main/images/setosa.jpg",
+    1: "https://raw.githubusercontent.com/dong15022006-design/iris-fastapi/main/images/versicolor.jpg",
+    2: "https://raw.githubusercontent.com/dong15022006-design/iris-fastapi/main/images/virginica.jpg",
 }
 
 @app.get("/", response_class=HTMLResponse)
