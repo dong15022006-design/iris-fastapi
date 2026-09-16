@@ -25,9 +25,9 @@ species = {
 
 # URL ảnh minh họa cho từng loài hoa
 species_images = {
-    0: "https://upload.wikimedia.org/wikipedia/commons/5/56/Iris_setosa_2.jpg",
-    1: "https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg",
-    2: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica_2.jpg",
+    0: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Iris_setosa_2.jpg/640px-Iris_setosa_2.jpg",
+    1: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Iris_versicolor_3.jpg/640px-Iris_versicolor_3.jpg",
+    2: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Iris_virginica_2.jpg/640px-Iris_virginica_2.jpg",
 }
 
 @app.get("/")
