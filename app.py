@@ -23,6 +23,13 @@ species = {
     2: "virginica",
 }
 
+# URL ảnh minh họa cho từng loài hoa
+species_images = {
+    0: "https://upload.wikimedia.org/wikipedia/commons/5/56/Iris_setosa_2.jpg",
+    1: "https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg",
+    2: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Iris_virginica_2.jpg",
+}
+
 @app.get("/")
 def home():
     return {"message": "Iris SVM API is running"}
@@ -43,4 +50,5 @@ def predict(data: IrisInput):
     return {
         "class_id": prediction,
         "prediction": species[prediction],
+        "image_url": species_images[prediction],
     }
