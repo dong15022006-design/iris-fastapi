@@ -135,7 +135,7 @@ def home():
                 align-items: center;
                 justify-content: center;
                 gap: 12px;
-                margin-bottom: 8px;
+                margin-bottom: 10px;
             }
             .logo-icon {
                 width: 44px; height: 44px;
@@ -157,37 +157,9 @@ def home():
                 text-align: center;
                 color: rgba(255,255,255,0.5);
                 font-size: 14px;
-                margin-bottom: 35px;
+                margin-top: 8px;
+                margin-bottom: 40px;
                 font-weight: 400;
-            }
-            .badge-top {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 6px 14px;
-                background: rgba(78, 205, 196, 0.15);
-                border: 1px solid rgba(78, 205, 196, 0.3);
-                color: #4ecdc4;
-                border-radius: 50px;
-                font-size: 11px;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                margin-bottom: 20px;
-                position: relative;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            .badge-top::before {
-                content: '';
-                width: 6px; height: 6px;
-                background: #4ecdc4;
-                border-radius: 50%;
-                animation: pulse 2s infinite;
-            }
-            @keyframes pulse {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.5; transform: scale(1.3); }
             }
             .form-group { margin-bottom: 18px; }
             label {
@@ -286,7 +258,6 @@ def home():
         <div class="bg-orb"></div>
         <div class="bg-orb"></div>
         <div class="card">
-            <div class="badge-top">AI Powered</div>
             <div class="logo">
                 <div class="logo-icon">🌸</div>
                 <h1>Iris Classifier</h1>
