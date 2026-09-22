@@ -727,5 +727,142 @@ def predict_form(
 
     # Axis lines
     axis_lines = ""
+    for i in range(4):
+        angle = -math.pi / 2 + (2 * math.pi * i / 4)
+        x2 = 100 + 80 * math.cos(angle)
+        y2 = 100 + 80 * math.sin(angle)
+        axis_lines += f'<line x1="100" y1="100" x2="{x2:.1f}" y2="{y2:.1f}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>'
+
+    # Labels
     labels_radar = ["SL", "SW", "PL", "PW"]
-    for i
+    labels_svg = ""
+    for i, lbl in enumerate(labels_radar):
+        angle = -math.pi / 2 + (2 * math.pi * i / 4)
+        x = 100 + 95 * math.cos(angle)
+        y = 100 + 95 * math.sin(angle)
+        labels_svg += f'<text x="{x:.1f}" y="{y:.1f}" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle" dominant-baseline="middle">{lbl}</text>'
+
+    radar_user_pts = radar_points(radar_user)
+    radar_avg_pts = radar_points(radar_avg)
+
+    return f"""
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Kết quả: {info['name']}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{
+                font-family: 'Inter', sans-serif;
+                background: #0a0a1a;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }}
+            .card {{
+                background: rgba(255,255,255,0.05);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255,255,255,0.1);
+                max-width: 520px;
+                width: 100%;
+                padding: 40px;
+                border-radius: 28px;
+                box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+                text-align: center;
+                color: white;
+            }}
+            .species-name {{
+                font-size: 42px;
+                font-weight: 800;
+                background: linear-gradient(135deg, {info['color']}, {info['color2']});
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin: 15px 0;
+                text-transform: capitalize;
+            }}
+            .image-wrapper {{
+                margin: 20px 0;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            }}
+            .image-wrapper img {{ width: 100%; display: block; }}
+            .confidence-value {{
+                font-size: 32px;
+                font-weight: 700;
+                color: {info['color']};
+                margin: 10px 0;
+            }}
+            .radar-container {{
+                background: rgba(255,255,255,0.03);
+                border-radius: 16px;
+                padding: 15px;
+                margin: 20px 0;
+            }}
+            .btn-back {{
+                display: inline-block;
+                padding: 14px 32px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 12px;
+                font-weight: 600;
+                margin-top: 15px;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div style="font-size: 50px;">{info['emoji']}</div>
+            <h1 style="font-size: 16px; opacity: 0.6;">Loài hoa được nhận diện</h1>
+            <div class="species-name">{info['name']}</div>
+            <div class="image-wrapper">
+                <img src="{species_images[pred]}" alt="{info['name']}">
+            </div>
+            <div class="confidence-value">{confidence:.1f}%</div>
+            <div style="opacity: 0.5; font-size: 13px;">Độ tin cậy</div>
+
+            <div class="radar-container">
+                <div style="opacity: 0.5; font-size: 12px; margin-bottom: 10px;">So sánh với trung bình loài</div>
+                <svg viewBox="0 0 200 200" style="width: 100%; max-width: 250px;">
+                    {grid_lines}
+                    {axis_lines}
+                    <polygon points="{radar_avg_pts}" fill="{info['color']}22" stroke="{info['color']}88" stroke-width="1.5" stroke-dasharray="4,3"/>
+                    <polygon points="{radar_user_pts}" fill="#667eea55" stroke="#667eea" stroke-width="2"/>
+                    {labels_svg}
+                </svg>
+                <div style="display: flex; gap: 15px; justify-content: center; font-size: 11px; margin-top: 8px;">
+                    <span><span style="display: inline-block; width: 12px; height: 2px; background: #667eea; vertical-align: middle;"></span> Input</span>
+                    <span><span style="display: inline-block; width: 12px; height: 2px; background: {info['color']}; vertical-align: middle;"></span> Trung bình loài</span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; text-align: left;">
+                    <div style="font-size: 10px; opacity: 0.4; text-transform: uppercase;">Sepal Length</div>
+                    <div style="font-weight: 600; font-size: 15px;">{sepal_length} cm</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; text-align: left;">
+                    <div style="font-size: 10px; opacity: 0.4; text-transform: uppercase;">Sepal Width</div>
+                    <div style="font-weight: 600; font-size: 15px;">{sepal_width} cm</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; text-align: left;">
+                    <div style="font-size: 10px; opacity: 0.4; text-transform: uppercase;">Petal Length</div>
+                    <div style="font-weight: 600; font-size: 15px;">{petal_length} cm</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; text-align: left;">
+                    <div style="font-size: 10px; opacity: 0.4; text-transform: uppercase;">Petal Width</div>
+                    <div style="font-weight: 600; font-size: 15px;">{petal_width} cm</div>
+                </div>
+            </div>
+
+            <a href="/" class="btn-back">← Phân loại hoa khác</a>
+        </div>
+    </body>
+    </html>
+    """
