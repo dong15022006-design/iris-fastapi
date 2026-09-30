@@ -19,8 +19,8 @@ app = FastAPI(
 # ============ CẤU HÌNH ĐĂNG NHẬP ============
 # ĐỔI MẬT KHẨU TẠI ĐÂY
 USERS = {
-    "admin":     hashlib.sha256("Iris@2026".encode()).hexdigest(),
-    "giangdong": hashlib.sha256("GiangDong@2026".encode()).hexdigest(),
+    "admin":     hashlib.sha256("dong2006".encode()).hexdigest(),
+    "giangdong": hashlib.sha256("iris123".encode()).hexdigest(),
 }
 SESSIONS = {}
 SESSION_COOKIE = "iris_session"
