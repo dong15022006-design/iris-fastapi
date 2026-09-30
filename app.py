@@ -4,9 +4,9 @@ from pydantic import BaseModel
 from typing import Optional
 import joblib
 import numpy as np
-import random
 import secrets
 import hashlib
+import math
 
 model = joblib.load("svm_model.pkl")
 
@@ -17,9 +17,10 @@ app = FastAPI(
 )
 
 # ============ CẤU HÌNH ĐĂNG NHẬP ============
+# ĐỔI MẬT KHẨU TẠI ĐÂY
 USERS = {
-    "admin": hashlib.sha256("admin123".encode()).hexdigest(),
-    "user":  hashlib.sha256("user123".encode()).hexdigest(),
+    "admin":     hashlib.sha256("Iris@2026".encode()).hexdigest(),
+    "giangdong": hashlib.sha256("GiangDong@2026".encode()).hexdigest(),
 }
 SESSIONS = {}
 SESSION_COOKIE = "iris_session"
@@ -54,7 +55,6 @@ species_info = {
         "color2": "#ee5a6f",
         "emoji": "🌺",
         "desc": "Loài hoa nhỏ nhắn, cánh hoa ngắn và hẹp. Dễ phân biệt nhất trong 3 loài.",
-        "range": "Petal: 1.0–1.9 cm",
         "avg": [5.01, 3.42, 1.46, 0.24]
     },
     1: {
@@ -63,7 +63,6 @@ species_info = {
         "color2": "#44a08d",
         "emoji": "🌸",
         "desc": "Loài hoa trung bình, cánh hoa dài vừa phải. Thường nhầm với Virginica.",
-        "range": "Petal: 3.0–5.1 cm",
         "avg": [5.94, 2.77, 4.26, 1.33]
     },
     2: {
@@ -72,22 +71,9 @@ species_info = {
         "color2": "#6c5ce7",
         "emoji": "🌷",
         "desc": "Loài hoa lớn nhất, cánh hoa dài và rộng. Phân biệt bởi kích thước.",
-        "range": "Petal: 4.5–6.9 cm",
         "avg": [6.59, 2.97, 5.55, 2.03]
     },
 }
-
-SAMPLES = [
-    [5.1, 3.5, 1.4, 0.2, 0], [4.9, 3.0, 1.4, 0.2, 0], [4.7, 3.2, 1.3, 0.2, 0],
-    [5.0, 3.6, 1.4, 0.2, 0], [5.4, 3.9, 1.7, 0.4, 0], [4.6, 3.4, 1.4, 0.3, 0],
-    [5.0, 3.4, 1.5, 0.2, 0], [4.4, 2.9, 1.4, 0.2, 0], [4.9, 3.1, 1.5, 0.1, 0],
-    [7.0, 3.2, 4.7, 1.4, 1], [6.4, 3.2, 4.5, 1.5, 1], [6.9, 3.1, 4.9, 1.5, 1],
-    [5.5, 2.3, 4.0, 1.3, 1], [6.5, 2.8, 4.6, 1.5, 1], [5.7, 2.8, 4.5, 1.3, 1],
-    [6.3, 3.3, 4.7, 1.6, 1], [4.9, 2.4, 3.3, 1.0, 1], [6.6, 2.9, 4.6, 1.3, 1],
-    [6.3, 3.3, 6.0, 2.5, 2], [5.8, 2.7, 5.1, 1.9, 2], [7.1, 3.0, 5.9, 2.1, 2],
-    [6.3, 2.9, 5.6, 1.8, 2], [6.5, 3.0, 5.8, 2.2, 2], [7.6, 3.0, 6.6, 2.1, 2],
-    [4.9, 2.5, 4.5, 1.7, 2], [7.3, 2.9, 6.3, 1.8, 2], [6.7, 2.5, 5.8, 1.8, 2],
-]
 
 
 # ============ TRANG ĐĂNG NHẬP ============
@@ -229,22 +215,6 @@ def login_page(error: str = ""):
                 transform: translateY(-2px);
                 box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
             }}
-            .hint {{
-                margin-top: 20px;
-                padding-top: 20px;
-                border-top: 1px solid rgba(255,255,255,0.08);
-                color: rgba(255,255,255,0.4);
-                font-size: 12px;
-                text-align: center;
-                line-height: 1.6;
-            }}
-            .hint code {{
-                background: rgba(255,255,255,0.08);
-                padding: 2px 8px;
-                border-radius: 5px;
-                color: #4ecdc4;
-                font-family: monospace;
-            }}
         </style>
     </head>
     <body>
@@ -266,10 +236,6 @@ def login_page(error: str = ""):
                 </div>
                 <button type="submit">Đăng nhập →</button>
             </form>
-            <div class="hint">
-                Demo: <code>admin</code> / <code>admin123</code><br>
-                hoặc <code>user</code> / <code>user123</code>
-            </div>
         </div>
     </body>
     </html>
@@ -308,7 +274,7 @@ def logout(session: Optional[str] = Cookie(None, alias=SESSION_COOKIE)):
     return response
 
 
-# ============ TRANG CHỦ (yêu cầu đăng nhập) ============
+# ============ TRANG CHỦ ============
 @app.get("/", response_class=HTMLResponse)
 def home(session: Optional[str] = Cookie(None, alias=SESSION_COOKIE)):
     user = get_current_user(session)
@@ -928,7 +894,7 @@ def home(session: Optional[str] = Cookie(None, alias=SESSION_COOKIE)):
     """
 
 
-# ============ KẾT QUẢ (yêu cầu đăng nhập) ============
+# ============ KẾT QUẢ ============
 @app.post("/predict-form", response_class=HTMLResponse)
 def predict_form(
     sepal_length: float = Form(...),
@@ -969,7 +935,6 @@ def predict_form(
     radar_user = [v / m * 100 for v, m in zip(user_vals, maxes)]
     radar_avg = [v / m * 100 for v, m in zip(avg, maxes)]
 
-    import math
     def radar_points(values, r=80):
         n = len(values)
         pts = []
@@ -1131,7 +1096,7 @@ def predict_form(
     """
 
 
-# ============ API JSON (không cần login) ============
+# ============ API JSON ============
 @app.post("/predict")
 def predict(data: IrisInput):
     features = [[data.sepal_length, data.sepal_width, data.petal_length, data.petal_width]]
